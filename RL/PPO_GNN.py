@@ -171,7 +171,7 @@ class PPO:
 
         if self.has_continuous_action_space:
             with torch.no_grad():
-                state = torch.FloatTensor(state).to(device)
+                # state = torch.FloatTensor(state).to(device)
                 action, action_logprob = self.policy_old.act(state)
 
             self.buffer.states.append(state)

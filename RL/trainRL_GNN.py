@@ -17,18 +17,18 @@ def train():
     ####### initialize environment hyperparameters ######
     env_name = "RoboschoolWalker2d-v1"
 
-    has_continuous_action_space = False  # continuous action space; else discrete
+    has_continuous_action_space = True  # continuous action space; else discrete
 
     max_ep_len = 1000                   # max timesteps in one episode
-    max_training_timesteps = int(3e6)   # break training loop if timeteps > max_training_timesteps
+    max_training_timesteps = 3e6  # 1 minute for 5000(5e3)  # int(3e6)   # break training loop if timeteps > max_training_timesteps
 
-    print_freq = max_ep_len * 10        # print avg reward in the interval (in num timesteps)
+    print_freq = max_ep_len * 10       # print avg reward in the interval (in num timesteps)
     log_freq = max_ep_len * 2           # log avg reward in the interval (in num timesteps)
     save_model_freq = int(1e5)          # save model frequency (in num timesteps)
 
     action_std = 0.6                    # starting std for action distribution (Multivariate Normal)
     action_std_decay_rate = 0.05        # linearly decay action_std (action_std = action_std - action_std_decay_rate)
-    min_action_std = 0.1                # minimum action_std (stop decay after action_std <= min_action_std)
+    min_action_std = 0.01                # minimum action_std (stop decay after action_std <= min_action_std)
     action_std_decay_freq = int(2.5e5)  # action_std decay frequency (in num timesteps)
     #####################################################
 
@@ -44,7 +44,7 @@ def train():
     lr_actor = 0.0003       # learning rate for actor network
     lr_critic = 0.001       # learning rate for critic network
 
-    random_seed = 0         # set random seed if required (0 = no random seed)
+    random_seed = 42         # set random seed if required (0 = no random seed)
     #####################################################
 
     print("training environment name : " + env_name)
@@ -61,7 +61,7 @@ def train():
     # else:
     #     action_dim = env.action_space.n
 
-    action_dim = 7333264  # env.action_space.n
+    action_dim = 2  # env.action_space.n
     ###################### logging ######################
 
     #### log files for multiple runs are NOT overwritten
@@ -179,20 +179,25 @@ def train():
     while time_step <= max_training_timesteps:
 
         state = to_dense_adj(data.edge_index)
-        current_acc = GATRL.train_gnn(state)
+        current_acc = GATRL.eval_gnn(state) #GATRL.train_gnn(state)
         current_ep_reward = 0
 
         for t in range(1, max_ep_len+1):
 
-            print("Timestep: " + str(t))
+            print("Timestep: " + str(t) + " Acc: " + str(current_acc))
             # select action with policy
             embedded_state = GATRL.embed_state(state)
             action = ppo_agent.select_action(embedded_state)
-
+            action = np.clip(action, 0, 1)
+            node1 = (action[0] * 2707).astype(int)
+            node2 = (action[1] * 2707).astype(int)
             # step
-            state = torch.remainder(state+action, 2)
+            # state = torch.remainder(state+action, 2)
+            # node1 = int(action / 2708)
+            # node2 = int(action % 2708)
+            state[0, node1, node2] = torch.remainder(state[0, node1, node2] + 1, 2)
             torch.cuda.empty_cache()
-            new_acc = GATRL.train_gnn(state)
+            new_acc = GATRL.eval_gnn(state) #GATRL.train_gnn(state)
             reward = new_acc - current_acc
             current_acc = new_acc
             done = False
