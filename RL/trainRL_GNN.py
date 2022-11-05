@@ -259,6 +259,12 @@ def train():
         i_episode += 1
         training_acc.append(current_acc)
 
+    # open file in write mode
+    with open(r'results.txt', 'w') as fp:
+        for item in training_acc:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+        print('Done')
     log_f.close()
     # env.close()
     print("Model accuracy at end of episode:")
@@ -266,6 +272,7 @@ def train():
     plt.plot(training_acc)
     plt.title('Model accuracy at end of episode')
     plt.show()
+    plt.savefig("results.png", dpi=150)
     # print total training time
     print("============================================================================================")
     end_time = datetime.now().replace(microsecond=0)
