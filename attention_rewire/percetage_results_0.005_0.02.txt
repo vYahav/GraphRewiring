@@ -1,0 +1,10 @@
+Base_model - avg_acc = 0.8221999999999999 | max_acc = 0.832 | std = 0.006415605972938161 
+First_Layer > Prune - avg_acc = 0.8168 | max_acc = 0.835 | std = 0.014661514246488976 
+First_Layer > Add - avg_acc = 0.8211 | max_acc = 0.832 | std = 0.0076347887986505285 
+First_Layer > Prune And Add - avg_acc = 0.8196999999999999 | max_acc = 0.832 | std = 0.007071774883294841 
+Second_Layer > Prune - avg_acc = 0.8163 | max_acc = 0.833 | std = 0.012720455966670341 
+Second_Layer > Add - avg_acc = 0.8178000000000001 | max_acc = 0.832 | std = 0.008829496021857609 
+Second_Layer > Prune And Add - avg_acc = 0.8158 | max_acc = 0.827 | std = 0.008388086790204266 
+Both_Layers > Prune - avg_acc = 0.8225 | max_acc = 0.836 | std = 0.00956294933584821 
+Both_Layers > Add - avg_acc = 0.8196 | max_acc = 0.833 | std = 0.0074993333037010595 
+Both_Layers > Prune And Add - avg_acc = 0.8128 | max_acc = 0.825 | std = 0.007934733769950911 
